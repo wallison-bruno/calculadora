@@ -1,3 +1,4 @@
+import 'package:calculadora/calculadora_controller.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,71 +14,7 @@ class Calculadora extends StatefulWidget {
 }
 
 class _CalculadoraState extends State<Calculadora> {
-  String output = '0';
-
-  String sub = '0.00';
-
-  String _output = '0';
-  double numero1 = 0.0;
-  double numero2 = 0.0;
-  String operador = '';
-
-  _onPressButton(String rotulo) {
-    if (rotulo == 'LIMPAR') {
-      setState(() {
-        _output = '0';
-        numero1 = 0.0;
-        numero2 = 0.0;
-        operador = '';
-        sub = '0.00';
-      });
-    } else if (rotulo == '+' ||
-        rotulo == 'x' ||
-        rotulo == '-' ||
-        rotulo == '/') {
-      numero1 = double.parse(output);
-
-      setState(() {
-        sub = double.parse(output).toStringAsFixed(2);
-      });
-      operador = rotulo;
-
-      _output = '0';
-    } else if (rotulo == '.') {
-      if (_output.contains('.')) {
-      } else {
-        _output = _output + rotulo;
-      }
-    } else if (rotulo == '=') {
-      numero2 = double.parse(output);
-
-      if (operador == '+') {
-        _output = (numero1 + numero2).toString();
-      }
-      if (operador == '-') {
-        _output = (numero1 - numero2).toString();
-      }
-      if (operador == 'x') {
-        _output = (numero1 * numero2).toString();
-      }
-      if (operador == '/') {
-        _output = (numero1 / numero2).toString();
-      }
-
-      setState(() {
-        sub = double.parse(_output).toStringAsFixed(2);
-      });
-
-      numero1 = 0;
-      numero2 = 0;
-      operador = '';
-    } else {
-      _output = _output + rotulo;
-    }
-    setState(() {
-      output = double.parse(_output).toStringAsFixed(2);
-    });
-  }
+  CalculadoraController controller = CalculadoraController();
 
   Widget bildButton(String rotulo) {
     return Expanded(
@@ -90,7 +27,9 @@ class _CalculadoraState extends State<Calculadora> {
               color: Colors.red,
             )),
         onPressed: () {
-          _onPressButton(rotulo);
+          setState(() {
+            controller.onPressComper(rotulo);
+          });
         },
       ),
     );
@@ -99,19 +38,20 @@ class _CalculadoraState extends State<Calculadora> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      /*   appBar: AppBar(
         backgroundColor: Colors.red,
-      ),
+      ), */
       body: Container(
+        color: Colors.black87,
         child: Column(children: <Widget>[
           Container(
             alignment: Alignment.centerRight,
             padding: EdgeInsets.only(
-              top: 15,
+              top: 60,
               right: 20,
             ),
             child: Text(
-              output,
+              controller.entrada,
               style: TextStyle(
                 fontSize: 60,
                 fontWeight: FontWeight.bold,
@@ -127,7 +67,7 @@ class _CalculadoraState extends State<Calculadora> {
                 right: 20,
               ),
               child: Text(
-                sub,
+                controller.sub,
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -143,7 +83,7 @@ class _CalculadoraState extends State<Calculadora> {
                   bildButton('7'),
                   bildButton('8'),
                   bildButton('9'),
-                  bildButton('/'),
+                  bildButton('C'),
                 ],
               ),
               Row(
@@ -166,13 +106,12 @@ class _CalculadoraState extends State<Calculadora> {
                 children: <Widget>[
                   bildButton('.'),
                   bildButton('0'),
-                  bildButton('00'),
+                  bildButton('/'),
                   bildButton('+'),
                 ],
               ),
               Row(
                 children: <Widget>[
-                  bildButton('LIMPAR'),
                   bildButton('='),
                 ],
               ),
